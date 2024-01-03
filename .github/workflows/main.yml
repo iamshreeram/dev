@@ -12,7 +12,7 @@ jobs:
       - name: checkout repo content
         uses: actions/checkout@v4 # checkout the repository content to github runner
         with:
-          ref: covid-analytics
+          ref: main
       - name: Run covid script file
         run: |
             chmod +x ./covidanalytics/main.sh
