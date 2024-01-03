@@ -1,0 +1,1 @@
+This folder contains every reports that are generated periodically

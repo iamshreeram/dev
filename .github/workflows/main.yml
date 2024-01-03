@@ -1,0 +1,62 @@
+name: build the changes periodically 
+
+on: [push]
+#  schedule:
+#    - cron: '45 5 * * *' 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: checkout repo content
+        uses: actions/checkout@v4 # checkout the repository content to github runner
+        with:
+          ref: covid-analytics
+      - name: Run covid script file
+        run: |
+            chmod +x ./covidanalytics/main.sh
+            ./covidanalytics/main.sh
+        shell: bash
+
+#      - name: Upload report file
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: covid json reports
+#          path: ./covidanalytics/reports/${{ env.FILENAME }}
+#      - name: setup python
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: '3.9' # install the python version needed
+#      - name: install python packages
+#        run: |
+#          python -m pip install --upgrade pip
+#          pip install -r covidanalytics/requirements.txt
+#      - name: execute py script # run main.py
+#        run: python covidanalytics/main.py
+
+#      - name: commit files
+#        run: |
+#          git config --local user.email "action@github.com"
+#          git config --local user.name "GitHub Action"
+#          git add -A
+#          git diff-index --quiet HEAD || (git commit -a -m "updated logs" --allow-empty)
+          
+#      - name: push changes
+#        uses: ad-m/github-push-action@v0.6.0
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          branch: main 
+
+      - name: Copy report file to same repo
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source_file: './covidanalytics/${{ env.FILENAME }}'
+          destination_repo: 'iamshreeram/dev'
+          destination_folder: 'covidanalytics/reports/'
+          destination_branch: 'main'
+          user_email: 'shreeram.v@live.com'
+          user_name: 'iamshreeram'
+          commit_message: '[skip ci] : updated version of report from gh-actions'
